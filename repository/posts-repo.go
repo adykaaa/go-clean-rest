@@ -4,8 +4,8 @@ import (
 	"context"
 	"log"
 
-	"../entity"
 	"cloud.google.com/go/firestore"
+	"github.com/adykaaa/go-clean-rest/entity"
 )
 
 type PostRepository interface {
@@ -18,7 +18,7 @@ type repo struct {
 
 // New post repository
 func NewPostRepository() PostRepository {
-	return &repo{}
+	return repo{}
 }
 
 const (
@@ -36,7 +36,7 @@ func (*repo) Save(post *entity.Post) (*entity.Post, error) {
 
 	defer client.Close()
 
-	_, _, err := client.Collection(collectionName).Add(ctx, map[string]interface{}{
+	_, _, err = client.Collection(collectionName).Add(ctx, map[string]interface{}{
 		"ID":    post.ID,
 		"Title": post.Title,
 		"Text":  post.Text,
@@ -45,4 +45,5 @@ func (*repo) Save(post *entity.Post) (*entity.Post, error) {
 		log.Fatalf("Failed adding a new post: %v", err)
 	}
 
+	return post, nil
 }
