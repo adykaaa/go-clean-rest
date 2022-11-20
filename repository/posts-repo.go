@@ -6,6 +6,7 @@ import (
 
 	"cloud.google.com/go/firestore"
 	"github.com/adykaaa/go-clean-rest/entity"
+	"google.golang.org/api/iterator"
 )
 
 type PostRepository interface {
@@ -58,10 +59,13 @@ func (repo) FindAll() ([]entity.Post, error) {
 	defer client.Close()
 
 	var posts []entity.Post
-	iterator := client.Collection(collectionName).Documents(ctx)
+	iter := client.Collection(collectionName).Documents(ctx)
 	for {
-		doc, err := iterator.Next()
+		doc, err := iter.Next()
 		if err != nil {
+			if err == iterator.Done {
+				break
+			}
 			log.Fatalf("Failed to iterate the list of posts: %v", err)
 			return nil, err
 		}
