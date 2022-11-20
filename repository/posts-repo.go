@@ -17,7 +17,6 @@ type PostRepository interface {
 type repo struct {
 }
 
-// New post repository
 func NewPostRepository() PostRepository {
 	return repo{}
 }
