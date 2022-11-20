@@ -2,44 +2,41 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
+	"math/rand"
 	"net/http"
+
+	"github.com/adykaaa/go-clean-rest/entity"
+	"github.com/adykaaa/go-clean-rest/repository"
 )
 
 var (
-	posts []Post
+	repo repository.PostRepository = repository.NewPostRepository()
 )
-
-func init() {
-	posts = []Post{{Id: 1, Title: "Title 1", Text: "Text 1"}}
-}
 
 func getPosts(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
-	result, err := json.Marshal(posts)
+	posts, err := repo.FindAll()
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
-		resp.Write([]byte(`{"error": "Error marshaling the Posts array"}`))
+		resp.Write([]byte(`{"error": "Error getting the posts from FireBase"}`))
 		return
 	}
 	resp.WriteHeader(http.StatusOK)
-	resp.Write(result)
-	fmt.Println("GET /posts hit!")
+	json.NewEncoder(resp).Encode(posts)
 
 }
 
 func addPost(resp http.ResponseWriter, req *http.Request) {
-	var post Post
 	resp.Header().Set("Content-type", "application/json")
+	var post entity.Post
 	err := json.NewDecoder(req.Body).Decode(&post)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		resp.Write([]byte(`{"error": "Error marshaling the Posts array"}`))
 		return
 	}
-	post.Id = len(posts) + 1
-	posts = append(posts, post)
+	post.ID = rand.Int63()
+	repo.Save(&post)
 	resp.WriteHeader(http.StatusOK)
-	result, err := json.Marshal(post)
-	resp.Write(result)
+	json.NewEncoder(resp).Encode(post)
 }
