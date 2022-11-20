@@ -33,6 +33,16 @@ func (*repo) Save(post *entity.Post) (*entity.Post, error) {
 		log.Fatalf("Failed to create a Firestore Client: %v", err)
 		return nil, err
 	}
-	client.Collection(collectionName)
+
+	defer client.Close()
+
+	_, _, err := client.Collection(collectionName).Add(ctx, map[string]interface{}{
+		"ID":    post.ID,
+		"Title": post.Title,
+		"Text":  post.Text,
+	})
+	if err != nil {
+		log.Fatalf("Failed adding a new post: %v", err)
+	}
 
 }
