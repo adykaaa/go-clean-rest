@@ -12,18 +12,18 @@ type chiRouter struct{}
 var chiDispatcher = chi.NewRouter()
 
 func NewChiRouter() Router {
-	return chiRouter{}
+	return &chiRouter{}
 }
 
 func (*chiRouter) GET(uri string, f func(w http.ResponseWriter, r *http.Request)) {
-	chiDispatcher.HandleFunc(uri, f).Methods("GET")
+	chiDispatcher.Get(uri, f)
 }
 
 func (*chiRouter) POST(uri string, f func(w http.ResponseWriter, r *http.Request)) {
-	chiDispatcher.HandleFunc(uri, f).Methods("POST")
+	chiDispatcher.Post(uri, f)
 }
 
 func (*chiRouter) Serve(port string) {
-	fmt.Printf("Server listening on port %s", port)
-	http.ListenAndServe(port, muxDispatcher)
+	fmt.Printf("Server listening on port %s with Chi router!", port)
+	http.ListenAndServe(port, chiDispatcher)
 }

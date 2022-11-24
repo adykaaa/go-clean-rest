@@ -10,6 +10,13 @@ import (
 )
 
 var (
+
+	/*
+		The beauty in abstracting the Router away is this: it literally takes 1 variable
+		replacement to use a completely different Router library. Hell yeah!
+
+		httpRouter     router.Router             = router.NewChiRouter()
+	*/
 	httpRouter     router.Router             = router.NewMuxRouter()
 	postController controller.PostController = controller.NewPostController()
 )
