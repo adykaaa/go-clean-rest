@@ -7,18 +7,23 @@ import (
 
 	"github.com/adykaaa/go-clean-rest/controller"
 	router "github.com/adykaaa/go-clean-rest/http"
+	"github.com/adykaaa/go-clean-rest/repository"
+	"github.com/adykaaa/go-clean-rest/service"
 )
 
 var (
 
 	/*
-		The beauty in abstracting the Router away is this: it literally takes 1 variable
-		replacement to use a completely different Router library. Hell yeah!
+		The beauty in abstractions using interfaces is this:it literally takes 1-1 variable
+				replacements to use a completely different Router library and Database to store stuff. Hell yeah!
 
-		httpRouter     router.Router             = router.NewChiRouter()
+				postRepository repository.PostRepository = repository.NewSQLRepository()
+				httpRouter     router.Router             = router.NewChiRouter()
 	*/
 	httpRouter     router.Router             = router.NewMuxRouter()
-	postController controller.PostController = controller.NewPostController()
+	postRepository repository.PostRepository = repository.NewFirestoreRepository()
+	postService    service.PostService       = service.NewPostService(postRepository)
+	postController controller.PostController = controller.NewPostController(postService)
 )
 
 func main() {
