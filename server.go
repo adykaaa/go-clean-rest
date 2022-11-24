@@ -3,20 +3,27 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 
+	"github.com/adykaaa/go-clean-rest/controller"
 	router "github.com/adykaaa/go-clean-rest/http"
 )
 
-var httpRouter router.Router = router.NewMuxRouter()
+var (
+	httpRouter     router.Router             = router.NewMuxRouter()
+	postController controller.PostController = controller.NewPostController()
+)
 
 func main() {
-	const port string = ":8000"
-	httpRouter.GET("/", func(resp http.ResponseWriter, req *http.Request) {
-		fmt.Fprintln(resp, "Up and running...")
+	//temporary location for Firestore creds
+	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", "/home/adykaaa/Downloads/pragmatic-reviews-428f7-firebase-adminsdk-6wmp3-5a923f8d33.json")
+
+	httpRouter.GET("/", func(w http.ResponseWriter, req *http.Request) {
+		fmt.Fprintln(w, "Server is up and running...")
 	})
 
-	/*	httpRouter.POST("/posts", GetPosts).Methods("GET")
-		httpRouter.GET("/posts", AddPost).Methods("POST") */
+	httpRouter.POST("/posts", postController.AddPost)
+	httpRouter.GET("/posts", postController.GetPosts)
 
-	httpRouter.Serve(port)
+	httpRouter.Serve(":8000")
 }
