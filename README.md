@@ -24,6 +24,8 @@ Another example for this is the repository. According to our posts-repo.go, a re
 × the dependencies in your code can only point inwards, and there must be no circular dependencies (the inner layers must never depend on the outer layers)
 
 -> Imagine a world where your business logic was somehow dependent on the database logic you are using. If you were to change something in the db layer, you would have to change the business logic as well... Instead, our business logic must not know what's happening outside of its own realm. This principle can be observed perfectly in server.go, where the postService gets the postRepository as its dependency, and the PostController gets the postService as its dependency (moving from inside to out: Entity -> Service -> Controller -> Repository)
+![image](https://user-images.githubusercontent.com/28739032/203933445-30557ee3-d00c-4364-a207-e902ecdb613a.png)
+
 
 DDD:
 
